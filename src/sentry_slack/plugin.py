@@ -20,7 +20,9 @@ logger = logging.getLogger('sentry.plugins.slack')
 
 
 class SlackOptionsForm(forms.Form):
-    webhook = forms.CharField(help_text="The webhook")
+    webhook = forms.CharField(
+        help_text='Your custom Slack webhook URL',
+        widget=forms.TextInput(attrs={'class': 'span8'}))
 
 
 class SlackPlugin(Plugin):
