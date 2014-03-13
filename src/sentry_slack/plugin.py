@@ -9,7 +9,7 @@ import sentry_slack
 
 from django import forms
 
-from sentry.plugins import Plugin
+from sentry.plugins.bases import notify
 from sentry.utils import json
 
 import urllib
@@ -19,13 +19,13 @@ import logging
 logger = logging.getLogger('sentry.plugins.slack')
 
 
-class SlackOptionsForm(forms.Form):
+class SlackOptionsForm(notify.NotificationConfigurationForm):
     webhook = forms.CharField(
         help_text='Your custom Slack webhook URL',
         widget=forms.TextInput(attrs={'class': 'span8'}))
 
 
-class SlackPlugin(Plugin):
+class SlackPlugin(notify.NotificationPlugin):
     author = 'Sentry Team'
     author_url = 'https://github.com/getsentry'
     description = 'Post new exceptions to a Slack channel.'
@@ -44,9 +44,11 @@ class SlackPlugin(Plugin):
     def is_configured(self, project):
         return all((self.get_option(k, project) for k in ('webook',)))
 
-    def post_process(self, group, event, is_new, is_sample, **kwargs):
-        if not is_new:
-            return
+    def should_notify(self, group, event):
+        # Always notify since this is not a per-user notification
+        return True
+
+    def notify_users(self, group, event, fail_silently=False):
         message = event.get_email_subject()
         webhook = self.get_option('webhook', event.project)
         self.send_payload(webhook, group, message)
