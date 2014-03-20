@@ -1,7 +1,7 @@
 sentry-slack
 ============
 
-An extension for Sentry that sends notifications to a Slack channel.
+An extension for `Sentry <https://getsentry.com>`_ which posts notifications to a `Slack <https://slack.com>`_ channel.
 
 .. image:: http://i.imgur.com/MFsjVmB.png
 
