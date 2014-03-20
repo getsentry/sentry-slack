@@ -3,6 +3,8 @@ sentry-slack
 
 An extension for Sentry that sends notifications to a Slack channel.
 
+.. image:: http://i.imgur.com/MFsjVmB.png
+
 Install
 -------
 
