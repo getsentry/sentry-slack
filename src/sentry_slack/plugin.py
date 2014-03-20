@@ -15,8 +15,17 @@ from sentry.utils import json
 import urllib
 import urllib2
 import logging
+from cgi import escape
 
 logger = logging.getLogger('sentry.plugins.slack')
+
+LEVEL_TO_COLOR = {
+    'debug': 'cfd3da',
+    'info': '2788ce',
+    'warning': 'f18500',
+    'error': 'f43f20',
+    'fatal': 'd20f2a',
+}
 
 
 class SlackOptionsForm(notify.NotificationConfigurationForm):
@@ -48,16 +57,43 @@ class SlackPlugin(notify.NotificationPlugin):
         # Always notify since this is not a per-user notification
         return True
 
-    def notify_users(self, group, event, fail_silently=False):
-        message = event.get_email_subject()
-        webhook = self.get_option('webhook', event.project)
-        self.send_payload(webhook, group, message)
+    def color_for_group(self, group):
+        return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
 
-    def send_payload(self, webhook, group, message):
-        text = '<%s|%s>' % (group.get_absolute_url(), message)
-        values = {
-            'payload': json.dumps({'text': text.encode('utf8')})
+    def notify_users(self, group, event, fail_silently=False):
+        webhook = self.get_option('webhook', event.project)
+        project = event.project
+        team = event.team
+
+        title = '%s on <%s|%s %s>' % (
+            'New event' if group.times_seen == 1 else 'Regression',
+            group.get_absolute_url(),
+            escape(team.name.encode('utf-8')),
+            escape(project.name.encode('utf-8')),
+        )
+
+        message = group.message_short.encode('utf-8')
+        culprit = group.title.encode('utf-8')
+
+        # They can be the same if there is no culprit
+        # So we set culprit to an empty string instead of duplicating the text
+        if message == culprit:
+            culprit = ''
+
+        payload = {
+            'parse': 'none',
+            'text': title,
+            'attachments': [{
+                'color': self.color_for_group(group),
+                'fields': [{
+                    'title': escape(message),
+                    'value': escape(culprit),
+                    'short': False,
+                }]
+            }]
         }
+
+        values = {'payload': json.dumps(payload)}
 
         data = urllib.urlencode(values)
         request = urllib2.Request(webhook, data)
