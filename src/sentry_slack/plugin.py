@@ -42,7 +42,7 @@ class SlackPlugin(notify.NotificationPlugin):
     project_conf_form = SlackOptionsForm
 
     def is_configured(self, project):
-        return all((self.get_option(k, project) for k in ('webook',)))
+        return all((self.get_option(k, project) for k in ('webhook',)))
 
     def should_notify(self, group, event):
         # Always notify since this is not a per-user notification
