@@ -17,7 +17,7 @@ install_requires = [
 
 setup(
     name='sentry-slack',
-    version='0.0.0',
+    version='0.1.0',
     author='Matt Robenolt',
     author_email='matt@ydekproductons.com',
     url='https://github.com/getsentry/sentry-slack',
