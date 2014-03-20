@@ -3,7 +3,7 @@
 sentry-slack
 ============
 
-An extension for Sentry which posts notifications to Slack (https://slack.com/).
+An extension for `Sentry <https://getsentry.com>`_ which posts notifications to `Slack <https://slack.com>`_.
 
 :copyright: (c) 2014 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
@@ -22,7 +22,7 @@ setup(
     author_email='matt@ydekproductons.com',
     url='https://github.com/getsentry/sentry-slack',
     description='A Sentry extension which posts notifications to Slack (https://slack.com/).',
-    long_description=__doc__,
+    long_description=open('README.rst').read(),
     license='BSD',
     package_dir={'': 'src'},
     packages=find_packages('src'),
