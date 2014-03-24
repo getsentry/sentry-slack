@@ -98,8 +98,10 @@ class SlackPlugin(notify.NotificationPlugin):
         data = urllib.urlencode(values)
         request = urllib2.Request(webhook, data)
         try:
-            urllib2.urlopen(request)
+            return urllib2.urlopen(request).read()
         except urllib2.URLError:
-            logger.error('Could not connect to Slack.')
+            logger.error('Could not connect to Slack.', exc_info=True)
+            raise
         except urllib2.HTTPError as e:
-            logger.error('Error posting to Slack: %s', e.read())
+            logger.error('Error posting to Slack: %s', e.read(), exc_info=True)
+            raise
