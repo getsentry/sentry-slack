@@ -72,8 +72,8 @@ class SlackPlugin(notify.NotificationPlugin):
             escape(project.name.encode('utf-8')),
         )
 
-        message = group.message_short.encode('utf-8')
-        culprit = group.title.encode('utf-8')
+        message = getattr(group, 'message_short', group.message).encode('utf-8')
+        culprit = getattr(group, 'title', group.culprit).encode('utf-8')
 
         # They can be the same if there is no culprit
         # So we set culprit to an empty string instead of duplicating the text
