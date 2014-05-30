@@ -53,10 +53,6 @@ class SlackPlugin(notify.NotificationPlugin):
     def is_configured(self, project):
         return all((self.get_option(k, project) for k in ('webhook',)))
 
-    def should_notify(self, group, event):
-        # Always notify since this is not a per-user notification
-        return True
-
     def color_for_group(self, group):
         return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
 
