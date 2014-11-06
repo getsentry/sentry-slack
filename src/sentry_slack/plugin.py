@@ -37,7 +37,6 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
 class SlackPlugin(notify.NotificationPlugin):
     author = 'Sentry Team'
     author_url = 'https://github.com/getsentry'
-    description = 'Post new exceptions to a Slack channel.'
     resource_links = (
         ('Bug Tracker', 'https://github.com/getsentry/sentry-slack/issues'),
         ('Source', 'https://github.com/getsentry/sentry-slack'),
@@ -45,8 +44,8 @@ class SlackPlugin(notify.NotificationPlugin):
 
     title = 'Slack'
     slug = 'slack'
+    description = 'Post new exceptions to a Slack channel.'
     conf_key = 'slack'
-    description = 'Send errors to Slack'
     version = sentry_slack.VERSION
     project_conf_form = SlackOptionsForm
 
