@@ -8,6 +8,7 @@ sentry_slack.plugin
 import sentry_slack
 
 from django import forms
+from django.utils.html import escape
 
 from sentry.plugins.bases import notify
 from sentry.utils import json
@@ -15,7 +16,6 @@ from sentry.utils import json
 import urllib
 import urllib2
 import logging
-from cgi import escape
 
 logger = logging.getLogger('sentry.plugins.slack')
 
