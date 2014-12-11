@@ -81,7 +81,7 @@ class SlackPlugin(notify.NotificationPlugin):
             'attachments': [{
                 'color': self.color_for_group(group),
                 'fields': [{
-                    'title': escape(message),
+                    'title': message,
                     'value': escape(culprit),
                     'short': False,
                 }]
