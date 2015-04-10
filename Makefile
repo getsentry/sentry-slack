@@ -3,6 +3,6 @@ publish:
 
 clean:
 	rm -rf *.egg-info
-	rm -rf dist
+	rm -rf dist build
 
 .PHONY: publish clean
