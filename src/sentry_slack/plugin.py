@@ -8,7 +8,6 @@ sentry_slack.plugin
 import sentry_slack
 
 from django import forms
-from django.utils.html import escape
 
 from sentry.plugins.bases import notify
 from sentry.utils import json
@@ -63,8 +62,8 @@ class SlackPlugin(notify.NotificationPlugin):
         title = '%s on <%s|%s %s>' % (
             'New event' if group.times_seen == 1 else 'Regression',
             group.get_absolute_url(),
-            escape(team.name.encode('utf-8')),
-            escape(project.name.encode('utf-8')),
+            team.name.encode('utf-8'),
+            project.name.encode('utf-8'),
         )
 
         message = getattr(group, 'message_short', group.message).encode('utf-8')
@@ -82,7 +81,7 @@ class SlackPlugin(notify.NotificationPlugin):
                 'color': self.color_for_group(group),
                 'fields': [{
                     'title': message,
-                    'value': escape(culprit),
+                    'value': culprit,
                     'short': False,
                 }]
             }]
