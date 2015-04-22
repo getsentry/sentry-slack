@@ -9,14 +9,11 @@ import sentry_slack
 
 from django import forms
 
+from sentry import http
 from sentry.plugins.bases import notify
 from sentry.utils import json
 
 import urllib
-import urllib2
-import logging
-
-logger = logging.getLogger('sentry.plugins.slack')
 
 LEVEL_TO_COLOR = {
     'debug': 'cfd3da',
@@ -89,13 +86,4 @@ class SlackPlugin(notify.NotificationPlugin):
 
         values = {'payload': json.dumps(payload)}
 
-        data = urllib.urlencode(values)
-        request = urllib2.Request(webhook, data)
-        try:
-            return urllib2.urlopen(request).read()
-        except urllib2.URLError:
-            logger.error('Could not connect to Slack.', exc_info=True)
-            raise
-        except urllib2.HTTPError as e:
-            logger.error('Error posting to Slack: %s', e.read(), exc_info=True)
-            raise
+        return http.safe_urlopen(webhook, method='POST', data=values)
