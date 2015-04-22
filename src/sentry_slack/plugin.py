@@ -40,7 +40,7 @@ class SlackPlugin(notify.NotificationPlugin):
 
     title = 'Slack'
     slug = 'slack'
-    description = 'Post new exceptions to a Slack channel.'
+    description = 'Post notifications to a Slack channel.'
     conf_key = 'slack'
     version = sentry_slack.VERSION
     project_conf_form = SlackOptionsForm
