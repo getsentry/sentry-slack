@@ -25,7 +25,7 @@ LEVEL_TO_COLOR = {
 
 
 class SlackOptionsForm(notify.NotificationConfigurationForm):
-    webhook = forms.CharField(
+    webhook = forms.URLField(
         help_text='Your custom Slack webhook URL',
         widget=forms.TextInput(attrs={'class': 'span8'}))
 
