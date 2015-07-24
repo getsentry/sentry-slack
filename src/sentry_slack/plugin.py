@@ -5,11 +5,14 @@ sentry_slack.plugin
 :copyright: (c) 2015 by Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
+import operator
 import sentry_slack
 
 from django import forms
+from django.db.models import Q
 
 from sentry import http
+from sentry.models import TagKey, TagValue
 from sentry.plugins.bases import notify
 from sentry.utils import json
 
@@ -28,7 +31,14 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
     webhook = forms.URLField(
         help_text='Your custom Slack webhook URL',
         widget=forms.TextInput(attrs={'class': 'span8'}))
-
+    include_tags = forms.BooleanField(
+        help_text='Include tags with notifications',
+        required=False,
+    )
+    include_rules = forms.BooleanField(
+        help_text='Include triggering rules with notifications',
+        required=False,
+    )
 
 class SlackPlugin(notify.NotificationPlugin):
     author = 'Sentry Team'
@@ -51,39 +61,95 @@ class SlackPlugin(notify.NotificationPlugin):
     def color_for_group(self, group):
         return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
 
-    def notify_users(self, group, event, fail_silently=False):
-        if not self.is_configured(group.project):
-            return
+    def get_tags(self, event):
+        # TODO(dcramer): we want this behavior to be more accessible in sentry core
+        tag_list = event.get_tags()
+        if not tag_list:
+            return ()
 
-        webhook = self.get_option('webhook', event.project)
-        project = event.project
-        team = event.team
-
-        title = '%s on <%s|%s %s>' % (
-            'New event' if group.times_seen == 1 else 'Regression',
-            group.get_absolute_url(),
-            team.name.encode('utf-8'),
-            project.name.encode('utf-8'),
+        key_labels = {
+            o.key: o.get_label()
+            for o in TagKey.objects.filter(
+                project=event.project,
+                key__in=[t[0] for t in tag_list],
+            )
+        }
+        value_labels = {
+            (o.key, o.value): o.get_label()
+            for o in TagValue.objects.filter(
+                reduce(operator.or_, (Q(key=k, value=v) for k, v in tag_list)),
+                project=event.project,
+            )
+        }
+        return (
+            (key_labels[k], value_labels[(k, v)])
+            for k, v in tag_list
         )
 
-        message = getattr(group, 'message_short', group.message).encode('utf-8')
-        culprit = getattr(group, 'title', group.culprit).encode('utf-8')
+    def notify(self, notification):
+        event = notification.event
+        group = event.group
+        project = group.project
+
+        if not self.is_configured(project):
+            return
+
+        webhook = self.get_option('webhook', project)
+        team = event.team
+
+        title = group.message_short.encode('utf-8')
+        culprit = group.culprit.encode('utf-8')
+
+        fields = []
 
         # They can be the same if there is no culprit
         # So we set culprit to an empty string instead of duplicating the text
-        if message == culprit:
-            culprit = ''
+        if title != culprit:
+            fields.append({
+                'title': 'Culprit',
+                'value': culprit,
+                'short': False,
+            })
+
+        fields.append({
+            'title': 'Project',
+            'value': '%s / %s' % (
+                team.name.encode('utf-8'),
+                project.name.encode('utf-8'),
+            ),
+            'short': True,
+        })
+
+        if self.get_option('include_rules', project):
+            rules = []
+            for rule in notification.rules:
+                rule_link = reverse('sentry-edit-project-rule', args=[
+                    group.organization.slug, project.slug, rule.id
+                ])
+                rules.append((rule_link, rule.label.encode('utf-8')))
+
+            if rules:
+                fields.append({
+                    'title': 'Triggered By',
+                    'value': ', '.join('<%s | %s>' % r for r in rules),
+                    'short': False,
+                })
+
+        if self.get_option('include_tags', project):
+            for tag_key, tag_value in self.get_tags(event):
+                fields.append({
+                    'title': tag_key.encode('utf-8'),
+                    'value': tag_value.encode('utf-8'),
+                    'short': True,
+                })
 
         payload = {
             'parse': 'none',
-            'text': title,
             'attachments': [{
+                'title': title,
+                'title_link': group.get_absolute_url(),
                 'color': self.color_for_group(group),
-                'fields': [{
-                    'title': message,
-                    'value': culprit,
-                    'short': False,
-                }]
+                'fields': fields,
             }]
         }
 
