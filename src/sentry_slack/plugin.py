@@ -82,7 +82,7 @@ class SlackPlugin(notify.NotificationPlugin):
             )
         }
         return (
-            (key_labels[k], value_labels[(k, v)])
+            (key_labels.get(k, k), value_labels.get((k, v), v))
             for k, v in tag_list
         )
 
