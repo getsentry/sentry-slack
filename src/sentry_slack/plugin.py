@@ -40,6 +40,7 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
         required=False,
     )
 
+
 class SlackPlugin(notify.NotificationPlugin):
     author = 'Sentry Team'
     author_url = 'https://github.com/getsentry'
@@ -146,6 +147,7 @@ class SlackPlugin(notify.NotificationPlugin):
         payload = {
             'parse': 'none',
             'attachments': [{
+                'fallback': title,
                 'title': title,
                 'title_link': group.get_absolute_url(),
                 'color': self.color_for_group(group),
