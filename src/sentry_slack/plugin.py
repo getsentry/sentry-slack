@@ -62,7 +62,7 @@ class SlackPlugin(notify.NotificationPlugin):
     def color_for_group(self, group):
         return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
 
-    def get_tags(self, event):
+    def _get_tags(self, event):
         # TODO(dcramer): we want this behavior to be more accessible in sentry core
         tag_list = event.get_tags()
         if not tag_list:
@@ -137,7 +137,7 @@ class SlackPlugin(notify.NotificationPlugin):
                 })
 
         if self.get_option('include_tags', project):
-            for tag_key, tag_value in self.get_tags(event):
+            for tag_key, tag_value in self._get_tags(event):
                 fields.append({
                     'title': tag_key.encode('utf-8'),
                     'value': tag_value.encode('utf-8'),
