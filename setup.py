@@ -3,7 +3,8 @@
 sentry-slack
 ============
 
-An extension for `Sentry <https://getsentry.com>`_ which posts notifications to `Slack <https://slack.com>`_.
+An extension for `Sentry <https://getsentry.com>`_ which posts notifications
+to `Slack <https://slack.com>`_.
 
 :copyright: (c) 2015 by the Sentry Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
