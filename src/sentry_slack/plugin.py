@@ -9,14 +9,13 @@ import operator
 import sentry_slack
 
 from django import forms
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 
 from sentry import http
 from sentry.models import TagKey, TagValue
 from sentry.plugins.bases import notify
 from sentry.utils import json
-
-import urllib
 
 LEVEL_TO_COLOR = {
     'debug': 'cfd3da',
@@ -63,7 +62,7 @@ class SlackPlugin(notify.NotificationPlugin):
         return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
 
     def _get_tags(self, event):
-        # TODO(dcramer): we want this behavior to be more accessible in sentry core
+        # TODO(dcramer): we want this behavior to be more accessible in sentry
         tag_list = event.get_tags()
         if not tag_list:
             return ()
