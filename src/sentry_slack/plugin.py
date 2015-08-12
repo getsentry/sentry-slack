@@ -98,7 +98,7 @@ class SlackPlugin(notify.NotificationPlugin):
 
         title = group.message_short.encode('utf-8')
         culprit = group.culprit.encode('utf-8')
-        project_name = project.get_full_name()
+        project_name = project.get_full_name().encode('utf-8')
 
         fields = []
 
