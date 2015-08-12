@@ -95,10 +95,10 @@ class SlackPlugin(notify.NotificationPlugin):
             return
 
         webhook = self.get_option('webhook', project)
-        team = event.team
 
         title = group.message_short.encode('utf-8')
         culprit = group.culprit.encode('utf-8')
+        project_name = project.get_full_name()
 
         fields = []
 
@@ -113,10 +113,7 @@ class SlackPlugin(notify.NotificationPlugin):
 
         fields.append({
             'title': 'Project',
-            'value': '%s / %s' % (
-                team.name.encode('utf-8'),
-                project.name.encode('utf-8'),
-            ),
+            'value': project_name,
             'short': True,
         })
 
@@ -146,7 +143,7 @@ class SlackPlugin(notify.NotificationPlugin):
         payload = {
             'parse': 'none',
             'attachments': [{
-                'fallback': title,
+                'fallback': '[%s] %s' % (project_name, title),
                 'title': title,
                 'title_link': group.get_absolute_url(),
                 'color': self.color_for_group(group),
