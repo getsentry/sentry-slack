@@ -13,12 +13,12 @@ from setuptools import setup, find_packages
 
 
 install_requires = [
-    'sentry>=5.0.0',
+    'sentry>=7.0.0',
 ]
 
 setup(
     name='sentry-slack',
-    version='0.2.0',
+    version='0.3.0',
     author='Matt Robenolt',
     author_email='matt@ydekproductons.com',
     url='https://github.com/getsentry/sentry-slack',
