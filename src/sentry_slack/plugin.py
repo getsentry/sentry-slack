@@ -26,6 +26,13 @@ LEVEL_TO_COLOR = {
 }
 
 
+# Project.get_full_name backported from v8.0
+def get_project_full_name(project):
+    if project.team.name not in project.name:
+        return '%s %s' % (project.team.name, project.name)
+    return project.name
+
+
 class SlackOptionsForm(notify.NotificationConfigurationForm):
     webhook = forms.URLField(
         help_text='Your custom Slack webhook URL',
@@ -98,7 +105,7 @@ class SlackPlugin(notify.NotificationPlugin):
 
         title = group.message_short.encode('utf-8')
         culprit = group.culprit.encode('utf-8')
-        project_name = project.get_full_name().encode('utf-8')
+        project_name = get_project_full_name(project).encode('utf-8')
 
         fields = []
 
