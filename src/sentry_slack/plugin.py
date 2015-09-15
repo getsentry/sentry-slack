@@ -160,4 +160,6 @@ class SlackPlugin(notify.NotificationPlugin):
 
         values = {'payload': json.dumps(payload)}
 
+        # Apparently we've stored some bad data from before we used `URLField`.
+        webhook = webhook.strip(' ')
         return http.safe_urlopen(webhook, method='POST', data=values)
