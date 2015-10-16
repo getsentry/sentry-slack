@@ -41,6 +41,15 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
         help_text='Include tags with notifications',
         required=False,
     )
+    included_tag_keys = forms.CharField(
+        help_text='Only include these tags (comma separated list),'
+                  'leave empty to include all',
+        required=False,
+    )
+    excluded_tag_keys = forms.CharField(
+        help_text='Exclude these tags (comma separated list)',
+        required=False,
+    )
     include_rules = forms.BooleanField(
         help_text='Include triggering rules with notifications',
         required=False,
@@ -93,6 +102,12 @@ class SlackPlugin(notify.NotificationPlugin):
             for k, v in tag_list
         )
 
+    def get_tag_list(self, name, project):
+        option = self.get_option(name, project)
+        if not option:
+            return None
+        return set(tag.strip().lower() for tag in option.split(','))
+
     def notify(self, notification):
         event = notification.event
         group = event.group
@@ -140,12 +155,18 @@ class SlackPlugin(notify.NotificationPlugin):
                 })
 
         if self.get_option('include_tags', project):
+            included_tags = self.get_tag_list('included_tag_keys', project)
+            excluded_tags = self.get_tag_list('excluded_tag_keys', project)
             for tag_key, tag_value in self._get_tags(event):
-                fields.append({
-                    'title': tag_key.encode('utf-8'),
-                    'value': tag_value.encode('utf-8'),
-                    'short': True,
-                })
+                key = tag_key.lower()
+                included = included_tags is None or key in included_tags
+                excluded = excluded_tags is not None and key in excluded_tags
+                if included and not excluded:
+                    fields.append({
+                        'title': tag_key.encode('utf-8'),
+                        'value': tag_value.encode('utf-8'),
+                        'short': True,
+                    })
 
         payload = {
             'parse': 'none',
