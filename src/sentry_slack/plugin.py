@@ -36,7 +36,31 @@ def get_project_full_name(project):
 class SlackOptionsForm(notify.NotificationConfigurationForm):
     webhook = forms.URLField(
         help_text='Your custom Slack webhook URL',
-        widget=forms.TextInput(attrs={'class': 'span8'}))
+        widget=forms.URLInput(attrs={'class': 'span8'})
+    )
+    username = forms.CharField(
+        label='Bot Name',
+        help_text='The name that will be displayed by your bot messages.',
+        widget=forms.TextInput(attrs={'class': 'span8'}),
+        initial='Sentry',
+        required=False
+    )
+    icon_url = forms.URLField(
+        label='Icon URL',
+        help_text='The url of the icon to appear beside your bot (32px png), ' \
+                  'leave empty for none.<br />You may use ' \
+                  'http://myovchev.github.io/sentry-slack/images/logo32.png',
+        widget=forms.URLInput(attrs={'class': 'span8'}),
+        required=False
+    )
+    channel = forms.CharField(
+        help_text='Optional #channel name or @user',
+        widget=forms.TextInput(attrs={
+            'class': 'span8', 
+            'placeholder': 'e.g. #general or @user'
+        }),
+        required=False
+    )
     include_tags = forms.BooleanField(
         help_text='Include tags with notifications',
         required=False,
@@ -102,6 +126,9 @@ class SlackPlugin(notify.NotificationPlugin):
             return
 
         webhook = self.get_option('webhook', project)
+        username = self.get_option('username', project).strip()
+        icon_url = self.get_option('icon_url', project)
+        channel = self.get_option('channel', project).strip()
 
         title = group.message_short.encode('utf-8')
         culprit = group.culprit.encode('utf-8')
@@ -157,6 +184,15 @@ class SlackPlugin(notify.NotificationPlugin):
                 'fields': fields,
             }]
         }
+        
+        if username:
+            payload['username'] = username.encode('utf-8')
+            
+        if channel:
+            payload['channel'] = channel      
+
+        if icon_url:
+            payload['icon_url'] = icon_url
 
         values = {'payload': json.dumps(payload)}
 
