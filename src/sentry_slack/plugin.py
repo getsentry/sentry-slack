@@ -47,8 +47,8 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
     )
     icon_url = forms.URLField(
         label='Icon URL',
-        help_text='The url of the icon to appear beside your bot (32px png), ' \
-                  'leave empty for none.<br />You may use ' \
+        help_text='The url of the icon to appear beside your bot (32px png), '
+                  'leave empty for none.<br />You may use '
                   'http://myovchev.github.io/sentry-slack/images/logo32.png',
         widget=forms.URLInput(attrs={'class': 'span8'}),
         required=False
@@ -56,7 +56,7 @@ class SlackOptionsForm(notify.NotificationConfigurationForm):
     channel = forms.CharField(
         help_text='Optional #channel name or @user',
         widget=forms.TextInput(attrs={
-            'class': 'span8', 
+            'class': 'span8',
             'placeholder': 'e.g. #general or @user'
         }),
         required=False
@@ -184,12 +184,12 @@ class SlackPlugin(notify.NotificationPlugin):
                 'fields': fields,
             }]
         }
-        
+
         if username:
             payload['username'] = username.encode('utf-8')
-            
+
         if channel:
-            payload['channel'] = channel      
+            payload['channel'] = channel
 
         if icon_url:
             payload['icon_url'] = icon_url
