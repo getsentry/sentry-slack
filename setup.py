@@ -24,7 +24,7 @@ tests_require = [
 
 setup(
     name='sentry-slack',
-    version='0.4.0',
+    version='0.6.0.dev0',
     author='Matt Robenolt',
     author_email='matt@ydekproductons.com',
     url='https://github.com/getsentry/sentry-slack',
