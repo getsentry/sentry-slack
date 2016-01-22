@@ -17,7 +17,7 @@ env:
   global:
     - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 install:
-  - pip install flake8
+  - make develop
 script:
   - PYFLAKES_NODOCTEST=1 flake8 src
   - py.test
