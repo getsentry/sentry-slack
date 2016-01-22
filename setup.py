@@ -16,6 +16,12 @@ install_requires = [
     'sentry>=7.0.0',
 ]
 
+tests_require = [
+    'exam',
+    'flake8>=2.0,<2.1',
+    'responses',
+]
+
 setup(
     name='sentry-slack',
     version='0.4.0',
@@ -29,6 +35,9 @@ setup(
     packages=find_packages('src'),
     zip_safe=False,
     install_requires=install_requires,
+    extras_require={
+        'tests': tests_require,
+    },
     include_package_data=True,
     entry_points={
         'sentry.apps': [

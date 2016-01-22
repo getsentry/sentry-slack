@@ -142,19 +142,22 @@ class SlackPlugin(notify.NotificationPlugin):
             return
 
         webhook = self.get_option('webhook', project)
-        username = self.get_option('username', project).strip()
+        username = (self.get_option('username', project) or 'Sentry').strip()
         icon_url = self.get_option('icon_url', project)
-        channel = self.get_option('channel', project).strip()
+        channel = (self.get_option('channel', project) or '').strip()
 
         title = group.message_short.encode('utf-8')
-        culprit = group.culprit.encode('utf-8')
+        if group.culprit:
+            culprit = group.culprit.encode('utf-8')
+        else:
+            culprit = None
         project_name = get_project_full_name(project).encode('utf-8')
 
         fields = []
 
         # They can be the same if there is no culprit
         # So we set culprit to an empty string instead of duplicating the text
-        if title != culprit:
+        if culprit and title != culprit:
             fields.append({
                 'title': 'Culprit',
                 'value': culprit,
@@ -186,18 +189,20 @@ class SlackPlugin(notify.NotificationPlugin):
                 })
 
         if self.get_option('include_tags', project):
-            included_tags = self.get_tag_list('included_tag_keys', project)
-            excluded_tags = self.get_tag_list('excluded_tag_keys', project)
+            included_tags = set(self.get_tag_list('included_tag_keys', project) or [])
+            excluded_tags = set(self.get_tag_list('excluded_tag_keys', project) or [])
             for tag_key, tag_value in self._get_tags(event):
                 key = tag_key.lower()
-                included = included_tags is None or key in included_tags
-                excluded = excluded_tags is not None and key in excluded_tags
-                if included and not excluded:
-                    fields.append({
-                        'title': tag_key.encode('utf-8'),
-                        'value': tag_value.encode('utf-8'),
-                        'short': True,
-                    })
+                std_key = TagKey.get_standardized_key(key)
+                if included_tags and key not in included_tags and std_key not in included_tags:
+                    continue
+                if excluded_tags and (key in excluded_tags or std_key in excluded_tags):
+                    continue
+                fields.append({
+                    'title': tag_key.encode('utf-8'),
+                    'value': tag_value.encode('utf-8'),
+                    'short': True,
+                })
 
         payload = {
             'parse': 'none',

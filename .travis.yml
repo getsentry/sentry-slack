@@ -13,3 +13,4 @@ install:
   - pip install flake8
 script:
   - PYFLAKES_NODOCTEST=1 flake8 src
+  - py.test
