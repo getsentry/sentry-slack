@@ -16,6 +16,7 @@ from sentry import http
 from sentry.models import TagKey, TagValue
 from sentry.plugins.bases import notify
 from sentry.utils import json
+from sentry.utils.http import absolute_uri
 
 LEVEL_TO_COLOR = {
     'debug': 'cfd3da',
@@ -172,6 +173,9 @@ class SlackPlugin(notify.NotificationPlugin):
                 rule_link = reverse('sentry-edit-project-rule', args=[
                     group.organization.slug, project.slug, rule.id
                 ])
+                # Make sure it's an absolute uri since we're sending this
+                # outside of Sentry into Slack
+                rule_link = absolute_uri(rule_link)
                 rules.append((rule_link, rule.label.encode('utf-8')))
 
             if rules:
