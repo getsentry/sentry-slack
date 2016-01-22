@@ -1,5 +1,9 @@
 sudo: false
 language: python
+services:
+  - memcached
+  - postgresql
+  - redis-server
 python:
   - "2.7"
 cache:
