@@ -9,7 +9,7 @@ python:
 cache:
   directories:
     - node_modules
-    - .pip_download_cache
+    - $HOME/.cache/pip
 deploy:
   provider: pypi
   user: getsentry
