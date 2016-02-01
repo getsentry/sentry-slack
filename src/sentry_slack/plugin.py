@@ -146,7 +146,9 @@ class SlackPlugin(notify.NotificationPlugin):
         icon_url = self.get_option('icon_url', project)
         channel = (self.get_option('channel', project) or '').strip()
 
-        title = group.message_short.encode('utf-8')
+        title = event.message_short.encode('utf-8')
+        # TODO(dcramer): we'd like this to be the event culprit, but Sentry
+        # does not currently retain it
         if group.culprit:
             culprit = group.culprit.encode('utf-8')
         else:
