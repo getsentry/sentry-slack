@@ -1,6 +1,7 @@
 .PHONY: clean develop install-tests lint publish test
 
 develop:
+	pip install "pip>=7"
 	pip install -e .
 	make install-tests
 
