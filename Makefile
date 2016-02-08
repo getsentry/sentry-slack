@@ -1,10 +1,11 @@
 .PHONY: clean develop install-tests lint publish test
 
-develop: install-tests
+develop:
 	pip install -e .
+	make install-tests
 
 install-tests:
-	pip install "file://`pwd`#egg=sentry-slack[tests]"
+	pip install .[tests]
 
 lint:
 	@echo "--> Linting python"
