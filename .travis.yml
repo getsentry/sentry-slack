@@ -21,8 +21,12 @@ deploy:
 env:
   global:
     - PIP_DOWNLOAD_CACHE=".pip_download_cache"
+before_install:
+  - pip install codecov
 install:
   - make develop
 script:
   - PYFLAKES_NODOCTEST=1 flake8 src
-  - py.test
+  - coverage run --source=. -m py.test tests
+after_success:
+  - codecov
