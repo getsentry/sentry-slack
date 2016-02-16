@@ -5,22 +5,22 @@ services:
   - postgresql
   - redis-server
 python:
-  - "2.7"
+  - '2.7'
 cache:
   directories:
     - node_modules
-    - $HOME/.cache/pip
+    - "$HOME/.cache/pip"
 deploy:
   provider: pypi
   user: getsentry
   password:
-    secure: NMwOI1H9arp2vbgaidx9OY6y8990hiu0WsHtowEvEdGKXNzAQcy0sW3SoKcB6FN0bk11xhj49+5C++KAwMYwE/SL8Y5OoZ1/iYVI4/XlWNukr+1/pfPKVMgw3v5W+pL5Ba9TBdFfIoFPNYUDPLItSSjg94Bm95034gBkYWC5Hl0=
+    secure: Wr4IKCfgaX9cl4kfarZC/IiQxkzlV6O8/zOUDqh+AM7DIzJrKZCOgJGVWzDgE3ndJiov9D1KdcltoIhQmFdOMHhnjQ2/tJSEjowFHg/bVmyhCqJF11bVoWwmJFp1V26aVAVbFuUmTCaLn7ax3sZBFOUt7uj5zrmtpmt0r2l/Ruc=
   on:
     tags: true
-  distributions: 'sdist bdist_wheel'
+  distributions: sdist bdist_wheel
 env:
   global:
-    - PIP_DOWNLOAD_CACHE=".pip_download_cache"
+  - PIP_DOWNLOAD_CACHE=".pip_download_cache"
 before_install:
   - pip install codecov
 install:
