@@ -12,4 +12,8 @@ Install the package via ``pip``::
 
     pip install https://github.com/getsentry/sentry-slack/archive/master.zip
 
+or::
+
+    pip install sentry-slack
+
 You can now configure webhooks via the plugin configuration panel within your project.
