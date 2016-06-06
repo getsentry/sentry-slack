@@ -23,7 +23,7 @@ class SlackPluginTest(TestCase):
         self.plugin.set_option('webhook', 'http://example.com/slack', self.project)
 
         group = self.create_group(message='Hello world', culprit='foo.bar')
-        event = self.create_event(group=group, message='Hello world')
+        event = self.create_event(group=group, message='Hello world', tags={'level': 'warning'})
 
         rule = Rule.objects.create(project=self.project, label='my rule')
 
@@ -39,7 +39,7 @@ class SlackPluginTest(TestCase):
             'username': 'Sentry',
             'attachments': [
                 {
-                    'color': '#f43f20',
+                    'color': '#f18500',
                     'fields': [
                         {
                             'short': False,
@@ -58,4 +58,3 @@ class SlackPluginTest(TestCase):
                 },
             ],
         }
-

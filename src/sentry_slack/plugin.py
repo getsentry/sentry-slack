@@ -99,8 +99,8 @@ class SlackPlugin(notify.NotificationPlugin):
     def is_configured(self, project):
         return all((self.get_option(k, project) for k in ('webhook',)))
 
-    def color_for_group(self, group):
-        return '#' + LEVEL_TO_COLOR.get(group.get_level_display(), 'error')
+    def color_for_event(self, event):
+        return '#' + LEVEL_TO_COLOR.get(event.get_tag('level'), 'error')
 
     def _get_tags(self, event):
         # TODO(dcramer): we want this behavior to be more accessible in sentry
@@ -212,7 +212,7 @@ class SlackPlugin(notify.NotificationPlugin):
                 'fallback': '[%s] %s' % (project_name, title),
                 'title': title,
                 'title_link': group.get_absolute_url(),
-                'color': self.color_for_group(group),
+                'color': self.color_for_event(event),
                 'fields': fields,
             }]
         }
