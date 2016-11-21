@@ -1,6 +1,8 @@
 sentry-slack
 ============
 
+**DEPRECATED:** This project now lives in `sentry-plugins <https://github.com/getsentry/sentry-plugins>`_
+
 An extension for `Sentry <https://getsentry.com>`_ which posts notifications to a `Slack <https://slack.com>`_ channel.
 
 .. image:: https://i.imgur.com/MFsjVmB.png
